@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "onxons_auction_mod",
+  "version": "${version}",
+  "name": "Onxon's Auction Mod",
+  "description": "Run timed auctions on DonutSMP. Tracks /pay payments live, ranks the highest single payment, and keeps a history of your auctions.",
+  "authors": ["Onxon"],
+  "license": "All-Rights-Reserved",
+  "icon": "assets/onxons_auction_mod/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.onxon.auction.OnxonAuctionMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.8",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
