@@ -1,0 +1,42 @@
+name: build
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the source files were uploaded
+        run: |
+          echo "Java files found: $(ls *.java 2>/dev/null | wc -l)"
+          test -f fabric.mod.json || { echo "ERROR: fabric.mod.json is missing"; exit 1; }
+          test -f OnxonAuctionMod.java || { echo "ERROR: the Java files are missing"; exit 1; }
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+
+      - name: Build
+        run: gradle build --no-daemon
+
+      - name: Check the jar actually contains the mod
+        run: |
+          JAR=$(ls build/libs/*.jar | grep -v -- '-sources.jar' | head -n 1)
+          echo "Jar: $JAR"
+          unzip -l "$JAR"
+          unzip -l "$JAR" | grep -q "OnxonAuctionMod.class" || { echo "ERROR: jar has no mod code"; exit 1; }
+          unzip -l "$JAR" | grep -q "fabric.mod.json" || { echo "ERROR: jar has no fabric.mod.json"; exit 1; }
+
+      - name: Upload mod jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: Onxons-Auction-Mod
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
