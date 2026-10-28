@@ -20,11 +20,29 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
+// Flat layout: every file sits in the top level of the repo (no folders needed).
+sourceSets {
+    main {
+        java {
+            srcDirs = ['.']
+            include '*.java'
+        }
+        resources {
+            srcDirs = []
+        }
+    }
+}
+
 processResources {
     inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": inputs.properties.version
+    from('fabric.mod.json') {
+        expand "version": project.version
+    }
+    from('icon.png') {
+        into 'assets/onxons_auction_mod'
+    }
+    from('en_us.json') {
+        into 'assets/onxons_auction_mod/lang'
     }
 }
 
